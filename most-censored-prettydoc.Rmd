@@ -1,0 +1,85 @@
+---
+title: "The Most Censored Wechat Public Accounts"
+author: "curiositybits.cc"
+date: "Updated on `r Sys.time()` GMT"
+output:
+  prettydoc::html_pretty:
+    includes:
+       after_body: footer.html
+    theme: cayman
+    highlight: github
+       
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(DT)
+library(readr)
+library(ggplot2) 
+library(ggthemes)
+library(data.table)
+
+byaccounts_wide <- read.csv("https://curiositybits.cc/files/byaccounts_wide.csv")
+```
+
+## Acknowledgement 
+
+Data used for this visualization come from [Wechatscope API](https://wechatscope.jmsc.hku.hk/), a project of [JMSC@HKU](https://jmsc.hku.hk/)
+
+## The most censored for violating internet laws (since 4/12/2018)
+
+Showing public accounts that have at least 10 articles censored for violating internet laws. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p1 <- ggplot(data = byaccounts_wide[byaccounts_wide$Violating_internet_laws>=10,], aes(x = reorder(nickname, Violating_internet_laws), y = Violating_internet_laws)) +
+  geom_bar(aes(fill = Violating_internet_laws), stat = "identity") + 
+  xlab("Accounts") + ylab("# of censored articles") +
+  coord_flip(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on") +
+  geom_smooth(method = "lm", se = FALSE)+
+  theme_economist(base_size = 8, base_family = "SimSun",horizontal = TRUE, dkpanel = FALSE)+ scale_colour_economist()+
+  theme(legend.position = "none")
+
+p1
+```
+
+## The most self-censored (since 4/12/2018)
+
+Showing top public accounts that have at least 20 articles deleted by the account owners.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p2 <- ggplot(data = byaccounts_wide[byaccounts_wide$Deleted_by_the_account_owner>=20,], aes(x = reorder(nickname, Deleted_by_the_account_owner), y = Deleted_by_the_account_owner)) +
+  geom_bar(aes(fill = Deleted_by_the_account_owner), stat = "identity") + 
+  xlab("Accounts") + ylab("# of censored articles") +
+  coord_flip(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on") +
+  geom_smooth(method = "lm", se = FALSE)+
+  theme_economist(base_size = 8, base_family = "SimSun",horizontal = TRUE, dkpanel = FALSE)+ scale_colour_economist()+
+  theme(legend.position = "none")
+
+p2
+```
+
+## The most censored through blocking the entire account (since 4/12/2018)
+
+Showing top blocked public accounts that have at least 5 articles deleted.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p3 <- ggplot(data = byaccounts_wide[byaccounts_wide$Account_blocked>=5,], aes(x = reorder(nickname, Account_blocked), y = Account_blocked)) +
+  geom_bar(aes(fill = Account_blocked), stat = "identity") + 
+  xlab("Accounts") + ylab("# of censored articles") +
+  coord_flip(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on") +
+  geom_smooth(method = "lm", se = FALSE)+
+  theme_economist(base_size = 8, base_family = "SimSun",horizontal = TRUE, dkpanel = FALSE)+ scale_colour_economist()+
+  theme(legend.position = "none")
+
+p3
+```
+
+## The entire dataset (since 4/12/2018)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+datatable(byaccounts_wide, options = list(pageLength = 50)) 
+```
+
